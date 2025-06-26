@@ -1,1 +1,2 @@
-import {Home} from './Home';
+export {Home} from './Home';
+export {Autores} from './Autores';
