@@ -1,4 +1,4 @@
-import logo from '../assets/Logo.png';
+import logo from '../assets/LogoActualizado.png';
 
 export function Home() {
     return (
@@ -12,7 +12,7 @@ export function Home() {
                         className="w-[120px] h-auto mr-6"
                     />
                     <h2 className="text-white text-2xl font-light leading-tight">
-                        SISTEMA BIBLIOTECARIO<br />UCR
+                        SISTEMA BIBLIOTECARIO<br />
                     </h2>
                 </div>
             </div>
