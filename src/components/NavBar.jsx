@@ -13,14 +13,11 @@ export function Navbar() {
             <Link to="/autores" className="hover:underline">Autores</Link>
           </li>
           <li>
-            <Link to="/libros" className="hover:underline">Libros</Link>
-          </li>
-          <li>
             <Link to="/bibliotecario" className="hover:underline">Bibliotecario</Link>
           </li>
 
           <li>
-            <Link to="/libro" className="hover:underline">Libro</Link>
+            <Link to="/libro" className="hover:underline">Libros</Link>
           </li>
 
           <li>
