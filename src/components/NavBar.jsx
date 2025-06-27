@@ -18,6 +18,12 @@ export function Navbar() {
           <li>
             <Link to="/bibliotecario" className="hover:underline">Bibliotecario</Link>
           </li>
+          <li>
+            <Link to="/categoria" className="hover:underline">Categorias</Link>
+          </li>
+           <li>
+            <Link to="/sucursal" className="hover:underline">Sucursales</Link>
+          </li>
         </ul>
       </div>
     </nav>
