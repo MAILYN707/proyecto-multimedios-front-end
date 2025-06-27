@@ -19,12 +19,17 @@ export function Navbar() {
             <Link to="/bibliotecario" className="hover:underline">Bibliotecario</Link>
           </li>
 
+
           <li>
             <Link to="/libro" className="hover:underline">Libro</Link>
           </li>
 
           <li>
             <Link to="/prestamo" className="hover:underline">Préstamo</Link>
+
+          <li>
+            <Link to="/editoriales" className="hover:underline">Editoriales</Link>
+
           </li>
         </ul>
       </div>

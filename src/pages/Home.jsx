@@ -11,7 +11,7 @@ export function Home() {
                         alt="Logo del sistema"
                         className="w-[120px] h-auto mr-6"
                     />
-                    <h2 className="text-white text-2xl font-light leading-tight">
+                    <h2 className="text-[#2F8C8C] text-3xl font-semibold leading-tight">
                         SISTEMA BIBLIOTECARIO<br />
                     </h2>
                 </div>
