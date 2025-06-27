@@ -116,6 +116,14 @@ const Autor = () => {
                   >
                     Eliminar
                   </button>
+                  <button
+                    onClick={() => {
+                      window.location.href = `/libro?autor=${b.id_autor}`;
+                    }}
+                    className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-4 py-2 rounded-md font-semibold"
+                  >
+                    📘 Ver libros
+                  </button>
                 </td>
               </tr>
             ))}

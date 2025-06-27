@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { axiosClient } from "../services/axiosClient";
 import Toast from "../components/Toast";
 import FormLibro from "../components/FormLibro";
+import { useSearchParams } from "react-router-dom";
 
 const Libro = () => {
   const [libros, setLibros] = useState([]);
@@ -24,6 +25,9 @@ const Libro = () => {
   const [autorSeleccionado, setAutorSeleccionado] = useState("");
 
   const [cargandoAutores, setCargandoAutores] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const idAutor = searchParams.get("autor");
 
   const cargarLibros = async () => {
     try {
@@ -116,10 +120,6 @@ const Libro = () => {
     }
   };
 
-  useEffect(() => {
-    cargarLibros();
-  }, []);
-
   const mostrarMensaje = (texto) => {
     setMensaje(texto);
     setMostrarToast(true);
@@ -169,15 +169,37 @@ const Libro = () => {
       console.error("Error al eliminar:", error);
     }
   };
+  useEffect(() => {
+    const fetchLibros = async () => {
+      try {
+        const url = idAutor ? `/libro.php?id_autor=${idAutor}` : "/libro.php";
+        const res = await axiosClient.get(url);
+        setLibros(res.data);
+      } catch (error) {
+        console.error("Error al cargar libros:", error);
+      }
+    };
 
+    fetchLibros();
+  }, [idAutor]);
 
+  // Cargar todos los autores una sola vez
+  useEffect(() => {
+    cargarTodosLosAutores();
+  }, []);
   const [filtroTitulo, setFiltroTitulo] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
   return (
     <div className="bg-gray-300 min-h-screen flex flex-col items-center justify-start py-6 px-4">
             <h1 className="text-3xl font-bold text-[#2F8C8C] mb-4">Libros</h1>
-
+            { idAutor && (
+              <p className="text-lg text-gray-700 mb-2">
+                Mostrando libros del autor: <span className="font-semibold text-[#2F8C8C]">
+                  {autoresDisponibles.find(a => a.id_autor == idAutor)?.nombre_autor || `ID ${idAutor}`}
+                </span>
+              </p>
+            )}
           <div className="flex flex-wrap gap-4 justify-center items-center mb-6">
         <button
           onClick={() => document.getElementById("modal-crear-libro").showModal()}
