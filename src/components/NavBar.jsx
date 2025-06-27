@@ -26,10 +26,9 @@ export function Navbar() {
 
           <li>
             <Link to="/prestamo" className="hover:underline">Préstamo</Link>
-
+          </li>
           <li>
             <Link to="/editoriales" className="hover:underline">Editoriales</Link>
-
           </li>
         </ul>
       </div>
