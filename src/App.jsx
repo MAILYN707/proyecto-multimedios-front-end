@@ -4,9 +4,10 @@ import './App.css'
 import { Layout } from '@components/Layout';
 
 
-import { Home, Autores } from './pages';
+import { Home } from './pages';
 
 import Bibliotecario from './pages/Bibliotecario';
+import Autor from './pages/Autores';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
         <Route path="/" element={<Layout />} >
           <Route index element={<Home />} />
           <Route path="/bibliotecario" element={<Bibliotecario/>} />
-          <Route path="/autores" element={<Autores/>} />
+          <Route path="/autores" element={<Autor/>} />
       
         </Route>
       </Routes>
