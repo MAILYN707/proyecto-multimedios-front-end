@@ -6,6 +6,8 @@ import { Layout } from '@components/Layout';
 
 import { Home, Autores } from './pages';
 
+import Bibliotecario from './pages/Bibliotecario';
+
 
 function App() {
   return (
@@ -13,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />} >
           <Route index element={<Home />} />
+          <Route path="/bibliotecario" element={<Bibliotecario/>} />
           <Route path="/autores" element={<Autores/>} />
       
         </Route>
