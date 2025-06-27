@@ -6,6 +6,7 @@ import { Layout } from '@components/Layout';
 
 import { Home } from './pages/Home';
 import Bibliotecario from './pages/Bibliotecario';
+import Miembro from "./pages/Miembro";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Layout />} >
           <Route index element={<Home />} />
           <Route path="/bibliotecario" element={<Bibliotecario/>} />
+          <Route path="/miembros" element={<Miembro />} />
       
         </Route>
       </Routes>

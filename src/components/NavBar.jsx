@@ -18,6 +18,9 @@ export function Navbar() {
           <li>
             <Link to="/bibliotecario" className="hover:underline">Bibliotecario</Link>
           </li>
+          <li>
+            <Link to="/miembros" className="hover:underline">Miembros</Link>
+          </li>
         </ul>
       </div>
     </nav>
