@@ -6,6 +6,8 @@ import { Layout } from '@components/Layout';
 
 import { Home } from './pages/Home';
 import Bibliotecario from './pages/Bibliotecario';
+import Libro from './pages/Libro';
+import Prestamo from './pages/Prestamo';
 
 
 function App() {
@@ -15,6 +17,9 @@ function App() {
         <Route path="/" element={<Layout />} >
           <Route index element={<Home />} />
           <Route path="/bibliotecario" element={<Bibliotecario/>} />
+          <Route path="/libro" element={<Libro />} />
+          <Route path="/prestamo" element={<Prestamo />} />
+
       
         </Route>
       </Routes>

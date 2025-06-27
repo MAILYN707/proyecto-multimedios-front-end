@@ -15,7 +15,7 @@ const FormBibliotecario = ({ bibliotecario, setBibliotecario }) => {
     setFormData(actualizado);
     setBibliotecario(actualizado);
   };
-
+  
   return (
     <>
       <input
