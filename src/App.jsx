@@ -15,6 +15,7 @@ import Prestamo from './pages/Prestamo';
 import Autor from './pages/Autores';
 import Editorial from './pages/Editoriales';
 
+import Miembro from "./pages/Miembro";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
            <Route path="/editoriales" element={<Editorial/>} />
 
 
+          <Route path="/miembros" element={<Miembro />} />
       
         </Route>
       </Routes>

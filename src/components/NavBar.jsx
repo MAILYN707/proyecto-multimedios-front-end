@@ -25,7 +25,6 @@ export function Navbar() {
     
            <li>
             <Link to="/sucursal" className="hover:underline">Sucursales</Link>
-
           </li>
     
           <li>
@@ -40,6 +39,9 @@ export function Navbar() {
             <Link to="/editoriales" className="hover:underline">Editoriales</Link>
           </li>
     
+          <li>
+            <Link to="/miembros" className="hover:underline">Miembros</Link>
+          </li>
         </ul>
       </div>
     </nav>
