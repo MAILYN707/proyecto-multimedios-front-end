@@ -7,8 +7,12 @@ import { Layout } from '@components/Layout';
 import { Home } from './pages';
 
 import Bibliotecario from './pages/Bibliotecario';
+import Libro from './pages/Libro';
+import Prestamo from './pages/Prestamo';
+
 import Autor from './pages/Autores';
 import Editorial from './pages/Editoriales';
+
 
 
 function App() {
@@ -18,8 +22,14 @@ function App() {
         <Route path="/" element={<Layout />} >
           <Route index element={<Home />} />
           <Route path="/bibliotecario" element={<Bibliotecario/>} />
+
+          <Route path="/libro" element={<Libro />} />
+          <Route path="/prestamo" element={<Prestamo />} />
+
+
           <Route path="/autores" element={<Autor/>} />
            <Route path="/editoriales" element={<Editorial/>} />
+
       
         </Route>
       </Routes>
