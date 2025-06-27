@@ -26,6 +26,9 @@ const Libro = () => {
 
   const [cargandoAutores, setCargandoAutores] = useState(false);
 
+  const [categorias, setCategorias] = useState([]);
+  const [editoriales, setEditoriales] = useState([]);
+
   const [searchParams] = useSearchParams();
   const idAutor = searchParams.get("autor");
 
@@ -187,6 +190,24 @@ const Libro = () => {
   useEffect(() => {
     cargarTodosLosAutores();
   }, []);
+
+  useEffect(() => {
+    const cargarCategoriasYEditoriales = async () => {
+      try {
+        const [catRes, edRes] = await Promise.all([
+          axiosClient.get("/categoria.php"),
+          axiosClient.get("/editorial.php")
+        ]);
+        setCategorias(catRes.data);
+        setEditoriales(edRes.data);
+      } catch (error) {
+        console.error("Error al cargar categorías o editoriales:", error);
+      }
+    };
+
+    cargarCategoriasYEditoriales();
+  }, []);
+
   const [filtroTitulo, setFiltroTitulo] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
@@ -316,7 +337,12 @@ const Libro = () => {
       <dialog id="modal-crear-libro" className="rounded-lg w-full max-w-md bg-gray-300 p-6 shadow-md">
         <form method="dialog" onSubmit={handleCrear} className="space-y-4">
           <h2 className="text-xl font-bold text-[#2F8C8C] text-center">Nuevo Libro</h2>
-          <FormLibro libro={nuevo} setLibro={setNuevo} />
+          <FormLibro
+              libro={nuevo}
+              setLibro={setNuevo}
+              categorias={categorias}
+              editoriales={editoriales}
+            />
           <div className="flex justify-end gap-2">
             <button type="submit" className="bg-[#2F8C8C] hover:bg-[#267676] text-white px-4 py-2 rounded">Guardar</button>
             <button type="button" onClick={() => document.getElementById("modal-crear-libro").close()} className="bg-gray-300 hover:bg-gray-400 text-white px-4 py-2 rounded">Cancelar</button>
@@ -329,7 +355,12 @@ const Libro = () => {
         {editar && (
           <form method="dialog" onSubmit={handleEditar} className="space-y-4">
             <h2 className="text-xl font-bold text-[#2F8C8C] text-center">Editar Libro</h2>
-            <FormLibro libro={editar} setLibro={setEditar} />
+            <FormLibro
+              libro={editar}
+              setLibro={setEditar}
+              categorias={categorias}
+              editoriales={editoriales}
+            />
             <div className="flex justify-end gap-2">
               <button type="submit" className="bg-[#2F8C8C] hover:bg-[#267676] text-white px-4 py-2 rounded">Actualizar</button>
               <button type="button" onClick={() => document.getElementById("modal-editar-libro").close()} className="bg-gray-300 hover:bg-gray-400 text-white px-4 py-2 rounded">Cancelar</button>
