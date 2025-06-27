@@ -6,6 +6,7 @@ export function Navbar() {
       <div className="w-full flex justify-between items-center px-6">
         <span className="text-white text-xl font-semibold">Gestión Biblioteca</span>
         <ul className="flex space-x-6 text-white font-medium">
+    
           <li>
             <Link to="/" className="hover:underline">Inicio</Link>
           </li>
@@ -19,6 +20,15 @@ export function Navbar() {
           </li>
 
           <li>
+            <Link to="/categoria" className="hover:underline">Categorias</Link>
+          </li>
+    
+           <li>
+            <Link to="/sucursal" className="hover:underline">Sucursales</Link>
+
+          </li>
+    
+          <li>
             <Link to="/libro" className="hover:underline">Libros</Link>
           </li>
 
@@ -29,6 +39,7 @@ export function Navbar() {
           <li>
             <Link to="/editoriales" className="hover:underline">Editoriales</Link>
           </li>
+    
         </ul>
       </div>
     </nav>
