@@ -25,7 +25,6 @@ export function Navbar() {
     
            <li>
             <Link to="/sucursal" className="hover:underline">Sucursales</Link>
-
           </li>
     
           <li>

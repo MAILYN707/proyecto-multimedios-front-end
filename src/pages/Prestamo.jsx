@@ -3,6 +3,7 @@ import { axiosClient } from "../services/axiosClient";
 import Toast from "../components/Toast";
 import FormPrestamo from "../components/FormPrestamo";
 
+
 const Prestamo = () => {
   const [prestamos, setPrestamos] = useState([]);
   const [nuevo, setNuevo] = useState({
@@ -104,12 +105,13 @@ const Prestamo = () => {
                   <td>{p.id_prestamo}</td>
                   <td>{p.nombre_miembro || p.id_miembro}</td>
                   <td>{p.nombre_bibliotecario || p.id_bibliotecario}</td>
-                  <td>{p.fecha_prestamo}</td>
+                  <td>{p.fecha_prestamo?.split(" ")[0]}</td>
                   <td>{p.estado}</td>
                   <td className="space-x-2">
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         setEditar(p);
+                        await cargarDetallesPrestamo(p.id_prestamo);
                         document.getElementById("modal-editar-prestamo").showModal();
                       }}
                       className="bg-[#489C9C] hover:bg-[#3b8a8a] text-white px-3 py-1 rounded-md"
@@ -175,7 +177,7 @@ const Prestamo = () => {
 
       <Toast mensaje={mensaje} visible={mostrarToast} />
 
-      <dialog id="modal-crear-prestamo" className="rounded-lg w-full max-w-md bg-gray-300 p-6 shadow-md">
+      <dialog id="modal-crear-prestamo" className="rounded-lg w-full max-w-2xl bg-gray-300 p-6 shadow-md">
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-[#2F8C8C] text-center">Nuevo Préstamo</h2>
           <FormPrestamo
@@ -188,16 +190,27 @@ const Prestamo = () => {
             }}
           />
           <div className="flex justify-end">
-            <button type="button" onClick={() => document.getElementById("modal-crear-prestamo").close()} className="bg-gray-300 hover:bg-gray-400 text-white px-4 py-2 rounded">Cancelar</button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("modal-crear-prestamo").close()}
+              className="bg-gray-300 hover:bg-gray-400 text-white px-4 py-2 rounded"
+            >
+              Cancelar
+            </button>
           </div>
         </div>
       </dialog>
 
-      <dialog id="modal-editar-prestamo" className="rounded-lg w-full max-w-md bg-gray-300 p-6 shadow-md">
+      <dialog id="modal-editar-prestamo" className="rounded-lg w-full max-w-2xl bg-gray-300 p-6 shadow-md">
+
         {editar && (
           <form method="dialog" onSubmit={handleEditar} className="space-y-4">
             <h2 className="text-xl font-bold text-[#2F8C8C] text-center">Editar Préstamo</h2>
-            <FormPrestamo prestamo={editar} setPrestamo={setEditar} />
+            <FormPrestamo
+              prestamo={editar}
+              setPrestamo={setEditar}
+              detallesIniciales={detallesPrestamo[editar?.id_prestamo] || []}
+            />
             <div className="flex justify-end gap-2">
               <button type="submit" className="bg-[#2F8C8C] hover:bg-[#267676] text-white px-4 py-2 rounded">Actualizar</button>
               <button type="button" onClick={() => document.getElementById("modal-editar-prestamo").close()} className="bg-gray-300 hover:bg-gray-400 text-white px-4 py-2 rounded">Cancelar</button>
