@@ -8,6 +8,7 @@ import { Home } from './pages';
 
 import Bibliotecario from './pages/Bibliotecario';
 import Autor from './pages/Autores';
+import Editorial from './pages/Editoriales';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/bibliotecario" element={<Bibliotecario/>} />
           <Route path="/autores" element={<Autor/>} />
+           <Route path="/editoriales" element={<Editorial/>} />
       
         </Route>
       </Routes>

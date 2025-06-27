@@ -1,42 +1,42 @@
 import React, { useEffect, useState } from "react";
 
-const FormAutor = ({ autor, setAutor }) => {
-    const [formData, setFormData] = useState({ nombre_autor: "", fecha_nacimiento: "" });
+const FormEditorial = ({ editorial, setEditorial }) => {
+    const [formData, setFormData] = useState({ nombre_editorial: "", telefono: "" });
 
     useEffect(() => {
-        if (autor) {
-            setFormData(autor);
+        if (editorial) {
+            setFormData(editorial);
         }
-    }, [autor]);
+    }, [editorial]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         const actualizado = { ...formData, [name]: value };
         setFormData(actualizado);
-        setAutor(actualizado);
+        setEditorial(actualizado);
     };
 
     return (
         <>
             <input
                 type="text"
-                name="nombre_autor"
-                value={formData.nombre_autor}
+                name="nombre_editorial"
+                value={formData.nombre_editorial}
                 onChange={handleChange}
 
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400
                    focus:outline-none focus:ring-2 focus:ring-[#2F8C8C] focus:border-transparent sm:text-sm"
-                placeholder="Nombre"
+                placeholder="Nombre de la editorial"
                 required
             />
             <input
-                type="date"
-                name="fecha_nacimiento"
-                value={formData.fecha_nacimiento || ""}
+                type="text"
+                name="telefono"
+                value={formData.telefono}
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400
              focus:outline-none focus:ring-2 focus:ring-[#2F8C8C] focus:border-transparent sm:text-sm"
-                placeholder="Fecha de nacimiento"
+                placeholder="Número de teléfono"
                 required
             />
 
@@ -44,4 +44,4 @@ const FormAutor = ({ autor, setAutor }) => {
     );
 };
 
-export default FormAutor;
+export default FormEditorial;
