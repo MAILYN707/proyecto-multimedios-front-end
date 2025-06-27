@@ -15,9 +15,9 @@ const FormLibro = ({ libro, setLibro, categorias, editoriales}) => {
     }
   }, [libro]);
 
-  // ✅ Agregá esto aquí
-  categorias = categorias || [];
-  editoriales = editoriales || [];
+  if (!Array.isArray(categorias)) categorias = [];
+  if (!Array.isArray(editoriales)) editoriales = [];
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

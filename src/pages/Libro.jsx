@@ -177,14 +177,22 @@ const Libro = () => {
       try {
         const url = idAutor ? `/libro.php?id_autor=${idAutor}` : "/libro.php";
         const res = await axiosClient.get(url);
-        setLibros(res.data);
+
+        if (Array.isArray(res.data)) {
+          setLibros(res.data);
+        } else {
+          console.warn("La respuesta de libros no es un array:", res.data);
+          setLibros([]); // Para evitar errores al renderizar
+        }
       } catch (error) {
         console.error("Error al cargar libros:", error);
+        setLibros([]); // También importante si hay error
       }
     };
 
     fetchLibros();
   }, [idAutor]);
+
 
   // Cargar todos los autores una sola vez
   useEffect(() => {
