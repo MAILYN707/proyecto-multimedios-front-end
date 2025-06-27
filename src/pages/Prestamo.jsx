@@ -67,17 +67,22 @@ const Prestamo = () => {
 
   // 4) Abrir modal de edición y traer detalles
   const abrirEditar = async (p) => {
-    setEditar(p);
     try {
-      // cargo sus detalles
+      // Primero cargá los detalles del préstamo
       const res = await axiosClient.get(`detalle_prestamo.php?id_prestamo=${p.id_prestamo}`);
       setDetallesEdit(res.data);
+      
+      // Luego seteás el préstamo a editar
+      setEditar(p);
+
+      // Y solo después abrís el modal
+      document.getElementById("modal-editar-prestamo").showModal();
     } catch (error) {
       console.error("Error al cargar detalles para editar:", error);
       setDetallesEdit([]);
     }
-    document.getElementById("modal-editar-prestamo").showModal();
   };
+
 
   // 5) Guardar edición (préstamo + detalles)
   const handleEditar = async (e) => {

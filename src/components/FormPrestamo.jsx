@@ -48,21 +48,29 @@ const FormPrestamo = ({
     }
   }, [prestamo]);
 
-  // Cuando llegan detallesIniciales (al editar), los cargamos
   useEffect(() => {
-    if (detallesIniciales.length > 0) {
-      setDetalles(
-        detallesIniciales.map((d) => ({
-          id_detalle_prestamo: d.id_detalle_prestamo,
-          id_libro: d.id_libro,
-          cantidad: d.cantidad,
-          fecha_devolucion_prevista: d.fecha_devolucion_prevista,
-        }))
-      );
-    } else {
-      setDetalles([{ id_libro: "", cantidad: 1, fecha_devolucion_prevista: "" }]);
+    setDetallesInicializados(false);
+  }, [prestamo?.id_prestamo]);
+
+  const [detallesInicializados, setDetallesInicializados] = useState(false);
+
+  useEffect(() => {
+    if (!detallesInicializados) {
+      if (detallesIniciales.length > 0) {
+        setDetalles(
+          detallesIniciales.map((d) => ({
+            id_detalle_prestamo: d.id_detalle_prestamo,
+            id_libro: d.id_libro,
+            cantidad: d.cantidad,
+            fecha_devolucion_prevista: d.fecha_devolucion_prevista,
+          }))
+        );
+      } else {
+        setDetalles([{ id_libro: "", cantidad: 1, fecha_devolucion_prevista: "" }]);
+      }
+      setDetallesInicializados(true);
     }
-  }, [detallesIniciales]);
+  }, [detallesIniciales, detallesInicializados]);
 
   // Cargar la lista de libros para el <select>
   useEffect(() => {
