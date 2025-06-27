@@ -9,130 +9,152 @@ const Miembro = () => {
   const [modal, setModal] = useState(false);
   const [modalEliminar, setModalEliminar] = useState(false);
   const [miembroAEliminar, setMiembroAEliminar] = useState(null);
+
+  // Para manejar el modal de edición/agregado de detalle
   const [modalDetalle, setModalDetalle] = useState(false);
-  const [detalle, setDetalle] = useState({ id_miembro: "", direccion: "", telefono: "" });
+  // Para manejar el modal de solo lectura de detalle
   const [modalVerDetalle, setModalVerDetalle] = useState(false);
 
-  const obtenerMiembros = async () => {
-    try {
-      const { data } = await axiosClient.get("/miembro.php");
-      setMiembros(data);
-    } catch (error) {
-      Toast("Error al cargar miembros", "error");
-    }
+  // Estado del detalle
+  const [detalle, setDetalle] = useState({
+    id_miembro: "",
+    direccion: "",
+    telefono: "",
+  });
+  // Flag que indica si ya existe en BD
+  const [detalleExiste, setDetalleExiste] = useState(false);
+
+  // 1) Carga inicial de miembros
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axiosClient.get("Miembro.php");
+        setMiembros(data);
+      } catch {
+        Toast("Error al cargar miembros", "error");
+      }
+    })();
+  }, []);
+
+  // 2) Abre modal de “Agregar Detalles” con campos vacíos
+  const nuevoDetalle = (m) => {
+    setMiembro(m);
+    setDetalle({
+      id_miembro: m.id_miembro,
+      direccion: "",
+      telefono: "",
+    });
+    setDetalleExiste(false);
+    setModalDetalle(true);
   };
 
-  const obtenerDetalle = async (id) => {
+  // 3) Abre modal de “Ver Detalles” y carga de BD (si existe)
+  const verDetalle = async (m) => {
+    setMiembro(m);
     try {
-      const { data } = await axiosClient.get(`/miembro_detalle.php?id_miembro=${id}`);
-      if (data) {
-        setDetalle({ ...data });
+      const { data } = await axiosClient.get(
+        `MiembroDetalle.php?id_miembro=${m.id_miembro}`
+      );
+      setDetalle({ ...data });       // rellena
+      setDetalleExiste(true);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        // no existe aún
+        setDetalle({ id_miembro: m.id_miembro, direccion: "", telefono: "" });
+        setDetalleExiste(false);
       } else {
-        setDetalle({ id_miembro: id, direccion: "", telefono: "" });
+        Toast("Error al cargar detalles", "error");
       }
-    } catch (error) {
-      Toast("Error al cargar detalles", "error");
     }
+    setModalVerDetalle(true);
   };
 
-
+  // 4) Guarda o actualiza detalle según `detalleExiste`
   const guardarDetalle = async () => {
+    if (!detalle.direccion || !detalle.telefono) {
+      return Toast("Completa todos los campos de detalle", "error");
+    }
+    const payload = {
+      id_miembro: detalle.id_miembro,
+      direccion: detalle.direccion,
+      telefono: detalle.telefono,
+    };
     try {
-      if (!detalle.direccion || !detalle.telefono) {
-        Toast("Completa todos los campos de detalle", "error");
-        return;
+      if (detalleExiste) {
+        await axiosClient.put("MiembroDetalle.php", payload);
+        Toast("Detalle actualizado correctamente", "success");
+      } else {
+        await axiosClient.post("MiembroDetalle.php", payload);
+        Toast("Detalle agregado correctamente", "success");
       }
-
-      const datos = {
-        id_miembro: detalle.id_miembro,
-        direccion: detalle.direccion,
-        telefono: detalle.telefono,
-      };
-
-      await axiosClient.put("/miembro_detalle.php", datos);
-      Toast("Detalles guardados correctamente", "success");
       setModalDetalle(false);
       setDetalle({ id_miembro: "", direccion: "", telefono: "" });
-    } catch (error) {
+      setDetalleExiste(false);
+    } catch {
       Toast("Error al guardar detalle", "error");
     }
   };
 
-
-  useEffect(() => {
-    obtenerMiembros();
-  }, []);
-
+  // 5) Crea o edita miembro
   const guardarMiembro = async () => {
+    if (!miembro.nombre || !miembro.correo) {
+      return Toast("Por favor completa todos los campos", "error");
+    }
     try {
-      if (!miembro.nombre || !miembro.correo) {
-        Toast("Por favor completa todos los campos", "error");
-        return;
-      }
-
       if (miembro.id_miembro) {
-        await axiosClient.put("/miembro.php", miembro);
-        Toast("Miembro actualizado");
+        await axiosClient.put("Miembro.php", miembro);
+        Toast("Miembro actualizado", "success");
       } else {
-        await axiosClient.post("/miembro.php", miembro);
-        Toast("Miembro creado");
+        await axiosClient.post("Miembro.php", miembro);
+        Toast("Miembro creado", "success");
       }
-
       setModal(false);
       setMiembro(null);
-      obtenerMiembros();
-    } catch (error) {
+      const { data } = await axiosClient.get("Miembro.php");
+      setMiembros(data);
+    } catch {
       Toast("Error al guardar miembro", "error");
     }
   };
 
-  const solicitarEliminacion = (miembro) => {
-    setMiembroAEliminar(miembro);
+  // 6) Manejo eliminación
+  const solicitarEliminacion = (m) => {
+    setMiembroAEliminar(m);
     setModalEliminar(true);
   };
-
   const confirmarEliminacion = async () => {
     try {
-      await axiosClient.delete(`/miembro.php?id=${miembroAEliminar.id_miembro}`);
-      Toast("Miembro eliminado");
+      await axiosClient.delete(`Miembro.php?id=${miembroAEliminar.id_miembro}`);
+      Toast("Miembro eliminado", "success");
       setModalEliminar(false);
-      setMiembroAEliminar(null);
-      obtenerMiembros();
-    } catch (error) {
+      const { data } = await axiosClient.get("Miembro.php");
+      setMiembros(data);
+    } catch {
       Toast("Error al eliminar miembro", "error");
     }
   };
 
-  const verDetalle = async (m) => {
-    setMiembro(m);
-    await obtenerDetalle(m.id_miembro);
-    setModalDetalle(true);
-  };
-
-  const verSoloDetalle = async (m) => {
-    setMiembro(m);
-    await obtenerDetalle(m.id_miembro);
-    setModalVerDetalle(true);
-  };
-
   return (
     <div className="p-6 min-h-screen bg-[#D3D7DE]">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold text-[#2F8C8C] mb-4">Gestión de Miembros</h1>
+        <h1 className="text-3xl font-bold text-[#2F8C8C]">
+          Gestión de Miembros
+        </h1>
         <button
           onClick={() => {
             setMiembro({ nombre: "", correo: "" });
             setModal(true);
           }}
-          className="bg-[#2F8C8C] text-white px-4 py-2 rounded transition-all duration-200 hover:scale-105 hover:bg-[#276f6f] active:scale-95"
+          className="bg-[#2F8C8C] text-white px-4 py-2 rounded hover:scale-105"
         >
           Nuevo Miembro
         </button>
       </div>
 
-
+      {/* Tabla de miembros */}
       {miembros.length > 0 ? (
-        <table className="w-full max-w-5xl text-center shadow-md rounded overflow-hidden">
+        <table className="w-full max-w-5xl mx-auto shadow-md rounded overflow-hidden">
           <thead className="bg-blue-200 text-[#1E3A8A] font-semibold">
             <tr>
               <th className="py-2 px-4">#</th>
@@ -141,44 +163,34 @@ const Miembro = () => {
               <th className="py-2 px-4">Acciones</th>
             </tr>
           </thead>
-          <tbody className="bg-white text-black">
-            {miembros.map((m, index) => (
+          <tbody className="bg-white">
+            {miembros.map((m, i) => (
               <tr key={m.id_miembro} className="border-b">
-                <td className="py-2">{index + 1}</td>
-                <td>{m.nombre}</td>
-                <td>{m.correo}</td>
-                <td className="space-x-2 py-2">
-                  {/* Botón Editar */}
+                <td className="py-2 px-4 text-center">{i + 1}</td>
+                <td className="py-2 px-4">{m.nombre}</td>
+                <td className="py-2 px-4">{m.correo}</td>
+                <td className="py-2 px-4 space-x-2 text-center">
                   <button
-                    onClick={() => {
-                      setMiembro(m);
-                      setModal(true); // ✅ ID original respetado
-                    }}
-                    className="bg-[#489C9C] hover:bg-[#3b8a8a] text-white px-4 py-2 rounded-md font-semibold"
+                    onClick={() => { setMiembro(m); setModal(true); }}
+                    className="bg-[#489C9C] hover:bg-[#3b8a8a] text-white px-3 py-1 rounded"
                   >
                     Editar
                   </button>
-
-                  {/* Botón Eliminar */}
                   <button
-                    onClick={() => solicitarEliminacion(m)} // ✅ lógica original
-                    className="bg-[#E57373] hover:bg-[#d65a5a] text-white px-4 py-2 rounded-md font-semibold"
+                    onClick={() => solicitarEliminacion(m)}
+                    className="bg-[#E57373] hover:bg-[#d65a5a] text-white px-3 py-1 rounded"
                   >
                     Eliminar
                   </button>
-
-                  {/* Botón Agregar Detalles */}
                   <button
-                    onClick={() => verDetalle(m)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md font-semibold"
+                    onClick={() => nuevoDetalle(m)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
                   >
                     Agregar Detalles
                   </button>
-
-                  {/* Botón Ver Detalles */}
                   <button
-                    onClick={() => verSoloDetalle(m)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-semibold"
+                    onClick={() => verDetalle(m)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   >
                     Ver Detalles
                   </button>
@@ -188,75 +200,141 @@ const Miembro = () => {
           </tbody>
         </table>
       ) : (
-        <p className="text-center text-gray-700 mt-6">
-          No hay miembros registrados.
-        </p>
+        <p className="text-center text-gray-700">No hay miembros registrados.</p>
       )}
 
-
-
-
-
-
-
-      {/* Modal Crear/Editar Miembro */}
+      {/* Modal crear/editar miembro */}
       {modal && (
-        <dialog open className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-40">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-lg font-bold mb-4">{miembro?.id_miembro ? "Editar" : "Nuevo"} Miembro</h2>
+        <dialog
+          open
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40"
+        >
+          <div className="bg-white p-6 rounded w-96">
+            <h2 className="text-lg font-bold mb-4">
+              {miembro?.id_miembro ? "Editar" : "Nuevo"} Miembro
+            </h2>
             <FormMiembro miembro={miembro} setMiembro={setMiembro} />
             <div className="mt-4 flex justify-end space-x-2">
-              <button onClick={guardarMiembro} className="bg-[#2F8C8C] text-white px-4 py-2 rounded hover:scale-105">Guardar</button>
-              <button onClick={() => setModal(false)} className="bg-gray-400 text-white px-4 py-2 rounded hover:scale-105">Cancelar</button>
+              <button
+                onClick={guardarMiembro}
+                className="bg-[#2F8C8C] text-white px-4 py-2 rounded"
+              >
+                Guardar
+              </button>
+              <button
+                onClick={() => setModal(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </dialog>
       )}
 
-      {/* Modal Detalles */}
+      {/* Modal agregar/editar detalle */}
       {modalDetalle && (
-        <dialog open className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-lg font-bold mb-4">Agregar detalles a {miembro?.nombre}</h2>
-            <p className="text-sm text-gray-500 mb-2">ID del miembro: {miembro?.id_miembro}</p>
-
-            <input type="text" placeholder="Dirección" value={detalle.direccion} onChange={(e) => setDetalle({ ...detalle, direccion: e.target.value })} className="w-full mb-2 px-3 py-2 border rounded" />
-            <input type="text" placeholder="Teléfono" value={detalle.telefono} onChange={(e) => setDetalle({ ...detalle, telefono: e.target.value })} className="w-full mb-4 px-3 py-2 border rounded" />
-
+        <dialog
+          open
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40"
+        >
+          <div className="bg-white p-6 rounded w-96">
+            <h2 className="text-lg font-bold mb-4">
+              Detallar a {miembro?.nombre}
+            </h2>
+            <p className="text-sm text-gray-500 mb-2">
+              ID: {detalle.id_miembro}
+            </p>
+            <input
+              type="text"
+              placeholder="Dirección"
+              value={detalle.direccion}
+              onChange={(e) =>
+                setDetalle((d) => ({ ...d, direccion: e.target.value }))
+              }
+              className="w-full mb-2 px-3 py-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Teléfono"
+              value={detalle.telefono}
+              onChange={(e) =>
+                setDetalle((d) => ({ ...d, telefono: e.target.value }))
+              }
+              className="w-full mb-4 px-3 py-2 border rounded"
+            />
             <div className="flex justify-end space-x-2">
-              <button onClick={guardarDetalle} className="bg-[#2F8C8C] text-white px-4 py-2 rounded hover:scale-105">Guardar</button>
-              <button onClick={() => setModalDetalle(false)} className="bg-gray-400 text-white px-4 py-2 rounded hover:scale-105">Cerrar</button>
+              <button
+                onClick={guardarDetalle}
+                className="bg-[#2F8C8C] text-white px-4 py-2 rounded"
+              >
+                Guardar
+              </button>
+              <button
+                onClick={() => setModalDetalle(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         </dialog>
       )}
 
-      {/* Modal Confirmar Eliminación */}
+      {/* Modal confirmar eliminación */}
       {modalEliminar && (
-        <dialog open className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-lg font-semibold mb-4 text-red-600">¿Estás seguro?</h2>
-            <p className="mb-4">¿Deseas eliminar al miembro <strong>{miembroAEliminar?.nombre}</strong>?</p>
+        <dialog
+          open
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+        >
+          <div className="bg-white p-6 rounded w-96">
+            <h2 className="text-lg font-semibold mb-4 text-red-600">
+              ¿Estás seguro?
+            </h2>
+            <p className="mb-4">
+              Eliminar a <strong>{miembroAEliminar?.nombre}</strong>?
+            </p>
             <div className="flex justify-end space-x-2">
-              <button onClick={confirmarEliminacion} className="bg-red-600 text-white px-4 py-2 rounded hover:scale-105">Eliminar</button>
-              <button onClick={() => setModalEliminar(false)} className="bg-gray-400 text-white px-4 py-2 rounded hover:scale-105">Cancelar</button>
+              <button
+                onClick={confirmarEliminacion}
+                className="bg-red-600 text-white px-4 py-2 rounded"
+              >
+                Eliminar
+              </button>
+              <button
+                onClick={() => setModalEliminar(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </dialog>
       )}
 
-      {/* Modal Ver Detalles */}
+      {/* Modal ver detalles */}
       {modalVerDetalle && (
-        <dialog open className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-lg font-bold mb-4">Detalles de {miembro?.nombre}</h2>
-            <div className="mb-4">
-              <p><strong>Dirección:</strong> {detalle?.direccion || "No registrada"}</p>
-              <p><strong>Teléfono:</strong> {detalle?.telefono || "No registrado"}</p>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <button onClick={() => { setModalVerDetalle(false); setModalDetalle(true); }} className="bg-yellow-500 text-white px-4 py-2 rounded hover:scale-105">Modificar</button>
-              <button onClick={() => setModalVerDetalle(false)} className="bg-gray-400 text-white px-4 py-2 rounded hover:scale-105">Cerrar</button>
+        <dialog
+          open
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
+        >
+          <div className="bg-white p-6 rounded w-96">
+            <h2 className="text-lg font-bold mb-4">
+              Detalles de {miembro?.nombre}
+            </h2>
+            <p>
+              <strong>Dirección:</strong> {detalle.direccion || "No registrada"}
+            </p>
+            <p>
+              <strong>Teléfono:</strong> {detalle.telefono || "No registrado"}
+            </p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setModalVerDetalle(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         </dialog>
