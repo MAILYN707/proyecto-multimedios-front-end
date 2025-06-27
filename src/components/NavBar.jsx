@@ -12,14 +12,24 @@ export function Navbar() {
           <li>
             <Link to="/autores" className="hover:underline">Autores</Link>
           </li>
+    
           <li>
             <Link to="/libros" className="hover:underline">Libros</Link>
           </li>
+    
           <li>
             <Link to="/bibliotecario" className="hover:underline">Bibliotecario</Link>
           </li>
 
+          <li>
+            <Link to="/categoria" className="hover:underline">Categorias</Link>
+          </li>
+    
+           <li>
+            <Link to="/sucursal" className="hover:underline">Sucursales</Link>
 
+          </li>
+    
           <li>
             <Link to="/libro" className="hover:underline">Libro</Link>
           </li>
@@ -29,6 +39,7 @@ export function Navbar() {
           </li>
           <li>
             <Link to="/editoriales" className="hover:underline">Editoriales</Link>
+
           </li>
         </ul>
       </div>
